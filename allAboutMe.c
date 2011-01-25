@@ -12,8 +12,7 @@
 
 
 void getInfo();
-void getMachineInfo();
-void getEntInfo();
+void printOthers(char lastChar, char** members);
 void getPermissions(char* premissions, int mode);
 
 int main()
@@ -39,6 +38,7 @@ void getInfo()
 	char hostname[1024];
 
 	user = getenv("USER");
+	char lastChar = user[strlen(user) - 1];
 	
 	pw = getpwnam(user);
 	gr = getgrgid(pw->pw_gid);
@@ -58,10 +58,33 @@ void getInfo()
 	printf("Home Permission : %s\n", permissions);
 	printf("Login Shell     : %s\n", pw->pw_shell);
 
+	printf("\nOther users that end with '%c':\n	", lastChar);
+	printOthers(lastChar, gr->gr_mem);
+
 	printf("\nAbout My Machine\n");
 	printf("================\n\n");
 	printf("host            : %s\n", hostname);
 	printf("System          : %s %s\n", un.sysname, un.release);
+}
+
+void printOthers(char lastChar, char** members)
+{
+	int i = 0;
+	int i2 = 0;
+
+	printf("inside the function at least");
+	while(1)
+	{
+		if(members != NULL)
+		{			
+			printf("found user");
+		}
+		else
+		{
+			break;
+		}
+		i++;
+	}
 }
 
 void getPermissions(char* permissions, int mode)
@@ -80,20 +103,5 @@ void getPermissions(char* permissions, int mode)
 	permissions[8] = (mode & S_IXOTH) ? 'x' : '-';
 
 	permissions[9] = '\0';
-}
-
-void getMachineInfo()
-{
-	
-}
-//this is starting with root. probably cycles through all users
-//will need for showing sharing end char.
-void getEntInfo()
-{
-	struct passwd *pw;
-
-	pw = getpwent();
-
-	printf("Unix User: %s (%d)\n", pw->pw_name, pw->pw_uid);
 }
 
