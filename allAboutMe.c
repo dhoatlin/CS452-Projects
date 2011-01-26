@@ -71,25 +71,24 @@ void getInfo()
 
 void printOthers(char lastChar, char** members)
 {
-	int i = 0;
-	
+	struct passwd *pw;
+
 	while(1)
 	{
-				
-		//printf("%s ", members[i]);	
-		if(members[i] != NULL)
+		pw = getpwent();
+	
+		if(pw != NULL)
 		{			
-			printf("inside the IF at least");			
-			if(members[i][strlen(members[i]) - 1] == lastChar)
-			{			
-				printf("%s ", members[i]);
-			}
+			char compareChar = pw->pw_name[strlen(pw->pw_name) - 1];
+			if(compareChar == lastChar)
+			{
+				printf("%s ", pw->pw_name);
+			}			
 		}
 		else
 		{
 			break;
 		}
-		i++;
 	}
 	printf("\n");
 }
@@ -110,7 +109,7 @@ void findAge()
 	years = tm->tm_year - 67;
 	months = tm->tm_mon + 4; //adding four for the remaining four months of the
 						  //previous year.
-	days = tm->tm_mday;
+	days = tm->tm_mday - 1; //subtracting 1 day because born on 
 
 	if(tm->tm_mon < 9)
 	{
