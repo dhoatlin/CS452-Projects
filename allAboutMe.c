@@ -9,19 +9,17 @@
 #include <grp.h>
 #include <sys/stat.h>
 #include <sys/utsname.h>
+#include <time.h>
 
 
 void getInfo();
 void printOthers(char lastChar, char** members);
 void getPermissions(char* premissions, int mode);
+void findAge();
 
 int main()
 {
-	//printf("explicite user selection\n");	
-
 	getInfo();
-	//printf("user selection via getpwent\n");
-	//getEntInfo();
 	return 0;
 }
 
@@ -58,8 +56,12 @@ void getInfo()
 	printf("Home Permission : %s\n", permissions);
 	printf("Login Shell     : %s\n", pw->pw_shell);
 
+	findAge();
+
 	printf("\nOther users that end with '%c':\n	", lastChar);
 	printOthers(lastChar, gr->gr_mem);
+
+	
 
 	printf("\nAbout My Machine\n");
 	printf("================\n\n");
@@ -70,14 +72,18 @@ void getInfo()
 void printOthers(char lastChar, char** members)
 {
 	int i = 0;
-	int i2 = 0;
-
-	printf("inside the function at least");
+	
 	while(1)
 	{
-		if(members != NULL)
+				
+		//printf("%s ", members[i]);	
+		if(members[i] != NULL)
 		{			
-			printf("found user");
+			printf("inside the IF at least");			
+			if(members[i][strlen(members[i]) - 1] == lastChar)
+			{			
+				printf("%s ", members[i]);
+			}
 		}
 		else
 		{
@@ -85,6 +91,39 @@ void printOthers(char lastChar, char** members)
 		}
 		i++;
 	}
+	printf("\n");
+}
+
+void findAge()
+{
+	struct tm* tm;
+	time_t now;
+	char currentDate[100];
+	int years;
+	int months;
+	int days;
+
+	now = time(NULL);
+
+	tm = localtime(&now);
+
+	years = tm->tm_year - 67;
+	months = tm->tm_mon + 4; //adding four for the remaining four months of the
+						  //previous year.
+	days = tm->tm_mday;
+
+	if(tm->tm_mon < 9)
+	{
+		years--;
+	}
+	else
+	{
+		months = tm->tm_mon - 9;
+	}
+
+	strftime(currentDate, sizeof(currentDate), "On %Y-%b-%d,", tm);
+
+	printf("%s I am %d years %d months %d days old\n", currentDate, years, months, days);
 }
 
 void getPermissions(char* permissions, int mode)
